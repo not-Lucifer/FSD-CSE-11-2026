@@ -43,8 +43,6 @@ const Home = () => {
 
   return (
     <div className="home">
-      <h1>Shopping Items</h1>
-
       <div className="items-grid">
         {itemData.map((item) => (
           <Saman
