@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo fetch</title>
+    <style>
+        table{
+            width:80vw;
+            margin:auto;
+            border:2px solid black;
+            background-color:lightblue;
+        }
+        th,td {
+            border:2px solid red;
+            padding:8px;
+            text-align:center;
+        }
+    </style>
+        <script>
+            let rate=0;
+        async function loadProduct()
+        {
+            URL="https://dummyjson.com/products?limit=10&skip=2";
+            try {
+                const res=await fetch(URL);
+                console.log("res",res);
+                const data=await res.json();
+                console.log("data",data.products);
+                let rows="";
+                data.products.map((i,index)=>{
+                    rows=rows + `
+                    <tr>
+                        <td>${index+1}</td>
+                        <td>${i.title}</td>
+                        <td><img src="${i.images[0]}" width="100" height="100" alt="${i.title}"></td>
+                        <td>${i.category}</td>
+                        <td>${i.rating}</td>
+                        <td>${(i.price*rate).toFixed(2)}</td>
+                        <td>${i.stock}</td>
+                        <td><button>Buy</button></td>
+                    </tr>`
+                })
+                const el=document.getElementById("data");
+                el.innerHTML=rows;
+            }
+            catch(err)
+            {
+                console.log("Error",err);
+            }
+        }
+        async function getRate()
+        {
+            const URL="https://open.er-api.com/v6/latest/USD";
+            try
+            {
+                const res=await fetch(URL);
+                const rate=await res.json();
+                console.log("Rate",rate.rates.INR);
+                return rate.rates.INR;
+            }
+            catch(err)
+            {
+                console.log("Error",err);
+            }
+        }
+        const test=async()=>{
+            rate=await getRate();
+            console.log("Rate",rate);
+        }
+        test();
+        loadProduct();
+    </script>
+</head>
+<body>
+    <h1>
+        <center>List of Products</center>
+    </h1>
+    <table>
+        <tr>
+            <th>Sr. No</th>
+            <th>Title</th>
+            <th>Image</th>
+            <th>Category</th>
+            <th>Rating</th>
+            <th>Price($)</th>
+            <th>Stock</th>
+            <th>Action</th>
+        </tr>
+        <tbody id="data"></tbody>
+    </table>
+</body>
+</html>
